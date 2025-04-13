@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pomodoro</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Pomodoro Timer</h1>
+    
+    <div class="timer-controls">
+      <label for="duration">Focus Time(min):</label>
+      <input type="number" id="duration" min="1" max="120" value="25">
+      <label for="breakDuration">Pause Time (min):</label>
+      <input type="number" id="breakDuration" min="1" max="60" value="5">
+    </div>
+
+    <div id="timer">25:00</div>
+
+    <div class="buttons">
+      <button id="focusBtn" onclick="startTimer('focus')">Start Focus</button>
+      <button id="breakBtn" onclick="startTimer('break')">Start Pause</button>
+      <button><a href="/dashboard" class="secondary">View Progress</a></button>
+    </div>
+  </div>
+
+  <script>
+    let minutes = 25;
+    let seconds = 0;
+    let interval;
+
+    function updateTimerDisplay() {
+      document.getElementById("timer").innerText =
+      `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    function startTimer(type) {
+    const focusInput = document.getElementById("duration");
+    const breakInput = document.getElementById("breakDuration");
+
+    minutes = type === 'focus' ? parseInt(focusInput.value) : parseInt(breakInput.value);
+    seconds = 0;
+    updateTimerDisplay();
+
+   
+    focusInput.disabled = true;
+    breakInput.disabled = true;
+    document.getElementById("focusBtn").disabled = true;
+    document.getElementById("breakBtn").disabled = true;
+
+    clearInterval(interval);
+    interval = setInterval(() => {
+        if (seconds === 0) {
+            if (minutes === 0) {
+                clearInterval(interval);
+                fetch("/save-session", {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: type,
+                        duration: type === 'focus' ? parseInt(focusInput.value) : parseInt(breakInput.value)
+                    })
+                });
+                alert("Sessão finalizada!");
+
+                
+                focusInput.disabled = false;
+                breakInput.disabled = false;
+                document.getElementById("focusBtn").disabled = false;
+                document.getElementById("breakBtn").disabled = false;
+                return;
+            }
+            minutes--;
+            seconds = 59;
+        } else {
+            seconds--;
+        }
+        updateTimerDisplay();
+    }, 1000);
+}
+
+    
+  </script>
+</body>
+</html>
