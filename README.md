@@ -40,7 +40,7 @@ This is a simple web application that helps users apply the Pomodoro Technique t
 
 Timer Page | Dashboard  
 :--:|:--:  
-![Timer](screenshot/image2.png) | ![Dashboard](screenshots/image.png)
+![Timer](pomodoro_app_v2/screenshots/image2.png) | ![Dashboard](pomodoro_app_v2/screenshots/image.png)
 
 
 
